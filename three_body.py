@@ -17,7 +17,7 @@ class body:
         self.m = m
         self.c = c
 
-        self.initial_state = {'x' : x, 'v': v, 'a': a, 'm': m, 'c': c}
+        self.initial_state = {'x' : np.copy(x), 'v': np.copy(v), 'a': np.copy(a), 'm': np.copy(m), 'c': np.copy(c)}
     
     def update(self, dt):
         #only does movement of x
@@ -50,11 +50,11 @@ class body:
         other.a += a * difference_unitized
     
     def reset(self):
-        self.x = self.initial_state.x
-        self.v = self.initial_state.v
-        self.a = self.initial_state.a
-        self.m = self.initial_state.m
-        self.c = self.initial_state.c
+        self.x = np.copy(self.initial_state['x'])
+        self.v = np.copy(self.initial_state['v'])
+        self.a = np.copy(self.initial_state['a'])
+        self.m = np.copy(self.initial_state['m'])
+        self.c = np.copy(self.initial_state['c'])
     
     def move(self, vector):
         self.x += vector
@@ -96,6 +96,10 @@ class Simulation:
 
     def pause(self):
         self.paused = not self.paused
+    
+    def reset(self):
+        for body in self.bodies:
+            body.reset()
 
 
 # Create simulation instance
@@ -123,4 +127,9 @@ def coords():
 @app.route('/pause')
 def pause():
     sim.pause()
+    return {}
+
+@app.route('/reset')
+def reset():
+    sim.reset()
     return {}
