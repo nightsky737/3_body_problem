@@ -1,7 +1,7 @@
 import * as THREE from "three"
 import { OrbitControls } from "https://unpkg.com/three@0.112/examples/jsm/controls/OrbitControls.js";
 
-//needs camera, renderer, etc
+//Screen setup shit
 
 const W = window.innerWidth;
 const H = window.innerHeight;
@@ -20,36 +20,34 @@ const cam = new THREE.PerspectiveCamera(fov, aspect, near, far)
 cam.position.z = 2;
 const scene = new THREE.Scene(); //adds the scene ig
 
+const controls = new OrbitControls(cam, renderer.domElement);
+controls.enableDamping = true;
+controls.dampingFactor = 0.03; 
 
-// 3.js has some base objects you can just shove in
+
+
+const ambientLight = new THREE.AmbientLight(0xffffff, 0.5); // color, intensity
+scene.add(ambientLight)
+
+const size = 10;
+const divisions = 10;
+const gridHelper = new THREE.GridHelper( size, divisions );
+scene.add( gridHelper );
+
+//Actual rendering/getting of objects
+
 
 //geometry + material applied are combined in mesh
 const geo = new THREE.IcosahedronGeometry(1, 2);
 const mat = new THREE.MeshStandardMaterial(({
     color: 0xcff,
-    flatShading :true
 }
 )) 
 
 const mesh = new THREE.Mesh(geo, mat);
 scene.add(mesh);
 
-//add a light to the thing.
-const hemilight = new THREE.HemisphereLight(0xffff, 0x000);
-scene.add(hemilight)
-
-
-//seprate import fo this shit
-const controls = new OrbitControls(cam, renderer.domElement);
-controls.enableDamping = true;
-controls.dampingFactor = 0.03; 
-
-
-/*
-uhh animate animates the object
-t is the timestep (not dt)
-animate gets called over and over again ig. why?
-*/
+//Animation
 function animate(t=0){
     requestAnimationFrame(animate);
     mesh.scale.setScalar(Math.cos(t * 0.001) + 1.0)

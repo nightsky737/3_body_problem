@@ -17,9 +17,12 @@ class body:
         self.m = m
         self.c = c
 
+        self.isinitial = True
+
         self.initial_state = {'x' : np.copy(x), 'v': np.copy(v), 'a': np.copy(a), 'm': np.copy(m), 'c': np.copy(c)}
     
     def update(self, dt):
+        self.isinitial = False
         #only does movement of x
         # max_a = 10e100
         # self.v += max(max_a, self.a )* dt
@@ -58,7 +61,8 @@ class body:
     
     def move(self, vector):
         self.x += vector
-        self.initial_state.x += vector
+        if self.isinitial:
+            self.initial_state.x += vector
 
 
 class Simulation:
@@ -117,7 +121,7 @@ threading.Thread(target=run_simulation, daemon=True).start()
 # route to the simulation page
 @app.route('/')
 def index():
-    return render_template('2d_index.html', origin_x=sim.origin_x, origin_y=sim.origin_y)
+    return render_template('3d_index.html', origin_x=sim.origin_x, origin_y=sim.origin_y)
 
 # route to get pendulum coords
 @app.route('/coords')

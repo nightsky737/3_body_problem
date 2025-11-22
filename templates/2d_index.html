@@ -34,7 +34,7 @@
         }
 
     let latestCoords = null;
-    const trails = [];
+    const trails = [[],[],[]];
     const MAX_TRAIL = 300; // cap trail length
         async function pollCoords() {
             try {
@@ -50,10 +50,11 @@
         function animate() {
             if (latestCoords) {
                 // Update trails
-                trail1.push({ x: latestCoords[0].x, y: latestCoords[0].y });
-                trail2.push({ x: latestCoords[1].x, y: latestCoords[1].y });
-                if (trail1.length > MAX_TRAIL) trail1.shift(); 
-                if (trail2.length > MAX_TRAIL) trail2.shift();
+                for(let i = 0; i < trails.length; i++){
+                    trails[i].push({x:  latestCoords[i].x, y: latestCoords[i].y })
+                    if (trails[i].length > MAX_TRAIL) trails[i].shift(); 
+
+                }
 
                 // Draw scene
                 drawPendulum(latestCoords);
@@ -70,8 +71,9 @@
                     ctx.lineWidth = 1.25;
                     ctx.stroke();
                 };
-                drawTrail(trail1, 'rgba(25,118,210,0.7)');
-                drawTrail(trail2, 'rgba(239,108,0,0.7)');
+                trails.forEach(trail => {
+                    drawTrail(trail, '#1976d2')
+                });
             }
             requestAnimationFrame(animate);
         }
