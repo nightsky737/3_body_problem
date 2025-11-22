@@ -16,6 +16,8 @@ class body:
         self.a = a #x, y, z vector
         self.m = m
         self.c = c
+
+        self.initial_state = {'x' : x, 'v': v, 'a': a, 'm': m, 'c': c}
     
     def update(self, dt):
         #only does movement of x
@@ -46,6 +48,17 @@ class body:
         #OOOH THE VECTORIZED SHIT YES BUT DIRECTION
         difference_unitized = difference / np.sqrt(r_squared) if r_squared != 0 else r_squared
         other.a += a * difference_unitized
+    
+    def reset(self):
+        self.x = self.initial_state.x
+        self.v = self.initial_state.v
+        self.a = self.initial_state.a
+        self.m = self.initial_state.m
+        self.c = self.initial_state.c
+    
+    def move(self, vector):
+        self.x += vector
+        self.initial_state.x += vector
 
 
 class Simulation:
@@ -53,6 +66,8 @@ class Simulation:
         self.bodies = bodies
         self.origin_x = 300
         self.origin_y = 100
+        self.paused = False
+    
         bodies.append(body(np.random.rand(3,) * 400, v=np.random.rand(3,) * 20, m= 10e10 ))
         bodies.append(body(np.random.rand(3,) * 400,v=np.random.rand(3,) * 20,  m= 10e10 ))
         bodies.append(body(np.random.rand(3,) * 400, v=np.random.rand(3,) * 20, m= 10e10 ))
@@ -79,13 +94,18 @@ class Simulation:
             {'x': body.x[0], 'y': body.x[1]} for body in self.bodies
         ]
 
+    def pause(self):
+        self.paused = not self.paused
+
+
 # Create simulation instance
 sim = Simulation([])
 
 def run_simulation():
     while True:
-        sim.step()
-        threading.Event().wait(0.03) #0.03)
+        if (not sim.paused):
+            sim.step()
+            threading.Event().wait(0.03) #0.03)
 
 # Start simulation in background thread
 threading.Thread(target=run_simulation, daemon=True).start()
@@ -93,9 +113,14 @@ threading.Thread(target=run_simulation, daemon=True).start()
 # route to the simulation page
 @app.route('/')
 def index():
-    return render_template('index.html', origin_x=sim.origin_x, origin_y=sim.origin_y)
+    return render_template('2d_index.html', origin_x=sim.origin_x, origin_y=sim.origin_y)
 
 # route to get pendulum coords
 @app.route('/coords')
 def coords():
     return jsonify(sim.get_coords())
+
+@app.route('/pause')
+def pause():
+    sim.pause()
+    return {}
