@@ -11,7 +11,7 @@
 import math, threading
 from flask import Flask, render_template, jsonify
 
-app = Flask(__name__)
+app = Flask(__name__) #assuming this makes flask stuff
 
 class Double_Pendulum:
     def __init__(self, origin_x: float=300, origin_y: float=100, length_rod_1: float=120,
@@ -28,7 +28,7 @@ class Double_Pendulum:
         # inital conditions
         self.theta_1 = theta_1 # Theta refers to the angle of the respective bob from vertical
         self.theta_2 = theta_2
-        self.omega_1 = omega_1 # Omega refers to the angular velocity of the respective bob
+        self.omega_1 = omega_1 # Omega refers to the angular velocity of the respective bob (ig also related to the derivatives of theta)
         self.omega_2 = omega_2   
         self.x_1 = self.origin_x + self.length_rod_1 * math.sin(self.theta_1)
         self.y_1 = self.origin_y + self.length_rod_1 * math.cos(self.theta_1)

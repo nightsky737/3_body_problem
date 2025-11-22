@@ -19,20 +19,7 @@
         function drawPendulum(coords) {
             ctx.clearRect(0, 0, canvas.width, canvas.height); // clears canvas
 
-            // Draw pivot
-            ctx.beginPath();
-            ctx.arc(ORIGIN_X, ORIGIN_Y, 4, 0, Math.PI * 2);
-            ctx.fillStyle = '#444';
-            ctx.fill();
 
-            // Draw rods
-            ctx.beginPath();
-            ctx.moveTo(ORIGIN_X, ORIGIN_Y);
-            ctx.lineTo(coords[0].x, coords[0].y);
-            ctx.lineTo(coords[1].x, coords[1].y);
-            ctx.strokeStyle = '#333';
-            ctx.lineWidth = 2;
-            ctx.stroke();
 
             // Draw bobs
             for (let i = 0; i < coords.length; i++) {
@@ -65,7 +52,7 @@
                 // Update trails
                 trail1.push({ x: latestCoords[0].x, y: latestCoords[0].y });
                 trail2.push({ x: latestCoords[1].x, y: latestCoords[1].y });
-                if (trail1.length > MAX_TRAIL) trail1.shift();
+                if (trail1.length > MAX_TRAIL) trail1.shift(); 
                 if (trail2.length > MAX_TRAIL) trail2.shift();
 
                 // Draw scene
