@@ -20,7 +20,7 @@ class body:
 
         self.isinitial = True
 
-        self.initial_state = {'x' : np.copy(x), 'v': np.copy(v), 'a': np.copy(a), 'm': np.copy(m), 'c': np.copy(c), 'r' : r}
+        self.initial_state = {'x' : np.copy(x), 'v': np.copy(v), 'a': np.copy(a), 'm': np.copy(m), 'c': c[:], 'r' : r}
     
     def update(self, dt):
         self.isinitial = False
@@ -52,7 +52,7 @@ class body:
         self.v = np.copy(self.initial_state['v'])
         self.a = np.copy(self.initial_state['a'])
         self.m = np.copy(self.initial_state['m'])
-        self.c = np.copy(self.initial_state['c'])
+        self.c = self.initial_state['c'][:]
     
     def move(self, vector):
         self.x += vector
@@ -92,7 +92,7 @@ class Simulation:
         ]
 
     def get_body_info(self):
-        return [{'r': body.r, 'c' : body.c} for body in self.bodies]
+        return [{'r': float(body.r), 'c' : body.c} for body in self.bodies]
 
     def pause(self):
         self.paused = not self.paused
@@ -142,4 +142,4 @@ def reset():
 
 @app.route("/get_body_info")
 def body_info():
-    return sim.get_body_info()
+    return jsonify(sim.get_body_info())
