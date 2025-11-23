@@ -14,7 +14,7 @@
     const fov = 75 //in degrees
     const aspect = W / H //aspect ratio
     const near = 0.1 //anything too close is not rendered
-    const far = 10 //anything too far is not rendered either
+    const far = 1000000 //anything too far is not rendered either
 
     const cam = new THREE.PerspectiveCamera(fov, aspect, near, far)
     cam.position.z = 2;
@@ -63,7 +63,6 @@
 
     });
 
-
     function update_bodies(coords) {
         // console.log("coords", coords)
         for (let i = 0; i < coords.length; i++) {
@@ -95,6 +94,7 @@
    
         }
 
+    let prevtrails = []
 
     //Animation
     function animate(t=0){
@@ -102,28 +102,40 @@
                     // Update trails
                     for(let i = 0; i < body_info.length; i++){
                         // console.log(body_info[i])
-                        body_info[i]['trail'].push({x:  latestCoords[i].x, y: latestCoords[i].y })
+                        body_info[i]['trail'].push({x:  latestCoords[i].x, y: latestCoords[i].y, z : latestCoords[i].z })
                         if (body_info[i]['trail'].length > MAX_TRAIL) body_info[i]['trail'].shift(); 
 
                     }
                     
                     update_bodies(latestCoords)
 
-                    // // Draw trails
-                    // const drawTrail = (trail, color) => {
-                    //     if (trail.length < 2) return;
-                    //     ctx.beginPath();
-                    //     ctx.moveTo(trail[0].x, trail[0].y);
-                    //     for (let i = 1; i < trail.length; i++) {
-                    //         ctx.lineTo(trail[i].x, trail[i].y);
-                    //     }
-                    //     ctx.strokeStyle = color;
-                    //     ctx.lineWidth = 1.25;
-                    //     ctx.stroke();
-                    // };
-                    // trails.forEach(trail => {
-                    //     drawTrail(trail, '#1976d2')
-                    // });
+
+                    // Draw trails
+                    const drawTrail = (trail, color) => {
+                        if (trail.length < 2) return;
+                        ctx.beginPath();
+                        ctx.moveTo(trail[0].x, trail[0].y);
+                        for (let i = 1; i < trail.length; i++) {
+                            ctx.lineTo(trail[i].x, trail[i].y);
+                        }
+                        ctx.strokeStyle = color;
+                        ctx.lineWidth = 1.25;
+                        ctx.stroke();
+                    };
+
+                    prevtrails.forEach(trail=>{
+                        scene.remove(trail)
+                        trail.geometry.dispose();
+                        trail.material.dispose();
+                    })
+
+                    body_info.forEach(info => {
+                        const mat = new THREE.LineBasicMaterial({color: '#1976d2'})
+                        const geo = new THREE.BufferGeometry().setFromPoints(info['trail'] )
+                        const line = new THREE.Line(geo, mat)
+                        scene.add(line)
+                        prevtrails.push(line)
+                    });
                 }
 
         requestAnimationFrame(animate);

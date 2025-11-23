@@ -16,7 +16,7 @@ class body:
         self.a = a #x, y, z vector
         self.m = m
         self.c = c
-        self.r = 0
+        self.r = 1
 
         self.isinitial = True
 
@@ -73,9 +73,9 @@ class Simulation:
         self.origin_y = 100
         self.paused = False
     
-        bodies.append(body(np.random.rand(3,) * 400, v=np.random.rand(3,) * 20, m= 10e10 ))
-        bodies.append(body(np.random.rand(3,) * 400,v=np.random.rand(3,) * 20,  m= 10e10 ))
-        bodies.append(body(np.random.rand(3,) * 400, v=np.random.rand(3,) * 20, m= 10e10 ))
+        self.add()
+        self.add()
+        self.add()
 
         # inital conditions
 
@@ -110,7 +110,7 @@ class Simulation:
             body.reset()
 
     def add(self):
-        self.bodies.append(body(np.random.rand(3,) * 400, v=np.random.rand(3,) * 20, m= 10e10 ))
+        self.bodies.append(body(np.random.rand(3,) * 400, v=(np.random.rand(3,) - 0.5)* 200, m= 10e10 ))
 
 
 
@@ -121,7 +121,7 @@ def run_simulation():
     while True:
         if (not sim.paused):
             sim.step()
-            threading.Event().wait(0.03) #0.03)
+            threading.Event().wait(0.03)
 
 # Start simulation in background thread
 threading.Thread(target=run_simulation, daemon=True).start()
