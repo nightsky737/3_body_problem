@@ -18,12 +18,23 @@
           "jsm/": "https://cdn.jsdelivr.net/npm/three@0.161.0/examples/jsm/"
         }
 			}
-		</script>
+		</script> 
   </head>
   <body>
-    <script type="module" src="../static/js/script.js"></script>
+    <script type="module" src="../static/js/renderer.js"></script>
+    <script type="module" src="../static/js/ui.js"></script>
+
     <div id="renderer"></div>
-    <div id="overlay"></div>
+    <div id="controls">
+        <div id="overlay-header">Controls ▼</div>
+        <div id="overlay-content">
+            <button id="pauseButton">Pause/Play</button>
+            <button id="pauseButton">Reset</button>
+
+        </div>
+    </div>
+
+<canvas id="three-canvas"></canvas>
     <script>
       //i guess we can add overlay i we might have to think a bit about thsi tho 
     </script>
@@ -53,5 +64,6 @@ function closeNav() {
   document.getElementById("main").style.marginLeft= "0";
 }
 </script>
+
 </body>
 </html>

@@ -85,6 +85,8 @@ class Simulation:
 
 
     def get_coords(self):
+        if self.paused:
+            return None
         return [
             {'x': body.x[0], 'y': body.x[1], 'z' : body.x[2]} for body in self.bodies
         ]
@@ -104,7 +106,6 @@ class Simulation:
         hex_components = [f"{value:02x}" for value in rgb_values]
         hex_color_code = '#' + ''.join(hex_components)
         self.bodies.append(body(np.random.rand(3,) * 400, v=(np.random.rand(3,) - 0.5)* 200,r=random.random()/2, m= 10e10, c=hex_color_code))
-
 
 
 # Create simulation instance

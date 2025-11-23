@@ -18,8 +18,7 @@
 
     const cam = new THREE.PerspectiveCamera(fov, aspect, near, far)
     cam.position.z = 2;
-    const scene = new THREE.Scene(); //adds the scene ig
-
+    const scene = new THREE.Scene();  
     const controls = new OrbitControls(cam, renderer.domElement);
     controls.enableDamping = true;
     controls.dampingFactor = 0.03; 
@@ -29,7 +28,6 @@
     const bg = loader.load([
         'existentialdread.jpg','existentialdread.jpg','existentialdread.jpg','existentialdread.jpg','existentialdread.jpg','existentialdread.jpg'
     ]);
-    // const bg = new THREE.MeshBasicMaterial({envMap : textureCube})
     scene.background = bg
 
     const ambientLight = new THREE.AmbientLight(0xffffff, 0.5); // color, intensity
@@ -52,7 +50,6 @@
     scene.add( gridHelperXY );
     scene.add( gridHelperYZ );
     scene.add( gridHelperXZ );
-    //Actual rendering/getting of objects
 
 
 
@@ -123,20 +120,6 @@
                     
                     update_bodies(latestCoords)
 
-
-                    // Draw trails
-                    const drawTrail = (trail, color) => {
-                        if (trail.length < 2) return;
-                        ctx.beginPath();
-                        ctx.moveTo(trail[0].x, trail[0].y);
-                        for (let i = 1; i < trail.length; i++) {
-                            ctx.lineTo(trail[i].x, trail[i].y);
-                        }
-                        ctx.strokeStyle = color;
-                        ctx.lineWidth = 1.25;
-                        ctx.stroke();
-                    };
-
                     prevtrails.forEach(trail=>{
                         scene.remove(trail)
                         trail.geometry.dispose();
@@ -159,5 +142,31 @@
     setInterval(pollCoords, 50);
 
     animate();
+let curenthighlighted = null;
+
+function destroy(item){
+    item.parent.remove(item)
+    item.geometry.dispose()
+    item.material.dispose()
+}
+
+function highlight(body){
+    const geo = new THREE.SphereGeometry(body.sphere.parameters.radius * 0.1, 32, 16)
+    const material = new THREE.MeshBasicMaterial({
+        color: body['c'],
+        transparent: true,
+        opacity: 0.5,
+    })
+    
+    body['highlighted_mesh'] = new THREE.Mesh(geo, material); 
+    body['sphere'].add(body['highlighted_mesh']);
+
+    destroy(currenthighlighted['highlighted_mesh']) // removes old highlited
+
+    currenthighlighted['highlighted_mesh'] = null // removes old highlited
+    currenthighlighted = body //now this is the currently clicked
+}
+
+
 
 
