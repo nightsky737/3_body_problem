@@ -8,7 +8,7 @@
     const renderer = new THREE.WebGLRenderer(); //antialias helps blend colors ig
 
     renderer.setSize(W, H);
-    document.body.appendChild(renderer.domElement) //append to DOM a new element. YESS MY JS IS COMING BACK
+    document.getElementById("renderer").appendChild(renderer.domElement) 
 
     //takes fov, aspect, near, far
     const fov = 75 //in degrees
@@ -23,8 +23,14 @@
     const controls = new OrbitControls(cam, renderer.domElement);
     controls.enableDamping = true;
     controls.dampingFactor = 0.03; 
-
-
+    
+    const loader = new THREE.CubeTextureLoader();
+    loader.setPath("/static/textures/");
+    const bg = loader.load([
+        'existentialdread.jpg','existentialdread.jpg','existentialdread.jpg','existentialdread.jpg','existentialdread.jpg','existentialdread.jpg'
+    ]);
+    // const bg = new THREE.MeshBasicMaterial({envMap : textureCube})
+    scene.background = bg
 
     const ambientLight = new THREE.AmbientLight(0xffffff, 0.5); // color, intensity
     scene.add(ambientLight)
