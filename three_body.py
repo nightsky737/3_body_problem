@@ -1,6 +1,6 @@
 import math, threading
 import numpy as np
-from flask import Flask, render_template, jsonify
+from flask import Flask, render_template, request, jsonify, url_for
 import random
 
 app = Flask(__name__) #assuming this makes flask stuff
@@ -18,10 +18,13 @@ class body:
         self.c = c
         self.r = r
 
-        self.isinitial = True
 
+        self.isinitial = True
         self.initial_state = {'x' : np.copy(x), 'v': np.copy(v), 'a': np.copy(a), 'm': np.copy(m), 'c': c[:], 'r' : r}
     
+    def get_logs(self):
+        return {'x' : np.copy(self.x), 'v': np.copy(self.v), 'a': np.copy(self.a), 'm': np.copy(self.m), 'c': self.c[:], 'r' : self.r}
+
     def update(self, dt):
         self.isinitial = False
         #only does movement of x
@@ -47,13 +50,14 @@ class body:
         difference_unitized = difference / np.sqrt(r_squared) if r_squared != 0 else r_squared
         other.a += a * difference_unitized
     
-    def reset(self):
-        self.x = np.copy(self.initial_state['x'])
-        self.v = np.copy(self.initial_state['v'])
-        self.a = np.copy(self.initial_state['a'])
-        self.m = np.copy(self.initial_state['m'])
-        self.c = self.initial_state['c'][:]
     
+    def rewind(self, saved_state):
+        self.x = np.copy(saved_state['x'])
+        self.v = np.copy(saved_state['v'])
+        self.a = np.copy(saved_state['a'])
+        self.m = np.copy(saved_state['m'])
+        self.c = saved_state['c'][:]
+
     def move(self, vector):
         self.x += vector
         if self.isinitial:
@@ -67,21 +71,57 @@ class Simulation:
         self.origin_y = 100
         self.paused = False
     
+
+        self.save_timesteps = 1e2 #saves every 10^4 timesteps
+        self.timestep = 0
+        self.logs = {}
+
+
+
         self.add()
         self.add()
         self.add()
 
         # inital conditions
+    def clean_logs_after(self):
+        #removes logs after self
+        pass
+
+    def wind(self, step_to_wind_to):
+        if step_to_wind_to < self.timestep:
+            #finds largest step before and then runs step until we get to it
+            saved_timesteps = [i for i in self.logs.keys()]
+            checkpoint = 0
+            for i in range(len(saved_timesteps) - 1,0, -1):
+                if saved_timesteps[i] < step_to_wind_to:
+                    checkpoint = saved_timesteps[i]
+            
+            self.timestep = checkpoint
+            print("saved_timesteps", saved_timesteps)
+            print("chosen", checkpoint)
+            print("checkpoint ful", self.logs[checkpoint])
+            for i in range(len(self.bodies)):
+                self.bodies[i].rewind( self.logs[checkpoint][i]) #rewinds all to saved state
+            
+        while(self.timestep != step_to_wind_to):
+            self.step()
 
     def step(self, dt: float=0.06):
+        if self.timestep % self.save_timesteps == 0:
+            #add a log
+            log = [body.get_logs() for body in self.bodies]
+            self.logs[self.timestep] = log
+
         for body in self.bodies:
             for body2 in self.bodies:
                 body.attract(body2)
+
         for body in self.bodies:
             body.update(dt)
     
         for body in self.bodies:
             body.a = np.zeros(3)
+        self.timestep += 1
 
 
     def get_coords(self):
@@ -99,7 +139,7 @@ class Simulation:
     
     def reset(self):
         for body in self.bodies:
-            body.reset()
+            body.rewind(body.initial_state)
 
     def add(self):
         rgb_values = random.randint(150,255),random.randint(150,255),random.randint(150,255) 
@@ -143,3 +183,10 @@ def reset():
 @app.route("/get_body_info")
 def body_info():
     return jsonify(sim.get_body_info())
+
+@app.route("/wind", methods=["POST"]) 
+def wind():
+    if request.method == 'POST':  
+        timestep = request.get_json()["timestep"]
+        sim.wind(int(timestep))
+        return {}

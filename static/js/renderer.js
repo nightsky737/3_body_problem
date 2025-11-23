@@ -66,6 +66,7 @@ function destroy(item){
     item.parent.remove(item)
 
     }
+    interactionManager.remove(item)
     item.geometry.dispose()
     item.material.dispose()
 }
@@ -89,7 +90,14 @@ async function setup(){
         body['sphere'] = sphere
         body['highlighted'] = false;
         scene.add( sphere );
-
+        interactionManager.add(sphere)
+        sphere.addEventListener('mousedown', (event) =>{
+            for (let i = 0; i < body_info.length; i++){
+                if(body_info[i]['sphere'] == event.target){
+                    highlight(i);
+                    break;
+                }
+            }})
     });
 
    return binfo
@@ -168,9 +176,15 @@ setInterval(pollCoords, 50);
 
 animate();
 
-let curenthighlighted = null;
-function highlight(body){
-const geo = new THREE.SphereGeometry(body.sphere.parameters.radius * 1.1, 32, 16)
+let curhighlighted = null;
+function highlight(idx){
+let body = body_info[idx]
+
+if (curhighlighted == body){
+    return;
+}
+
+const geo = new THREE.SphereGeometry(body['r'] * 1.2, 32, 16)
 const material = new THREE.MeshBasicMaterial({
     color: body['c'],
     transparent: true,
@@ -180,10 +194,12 @@ const material = new THREE.MeshBasicMaterial({
 body['highlighted_mesh'] = new THREE.Mesh(geo, material); 
 body['sphere'].add(body['highlighted_mesh']);
 
-destroy(currenthighlighted['highlighted_mesh']) // removes old highlited
+if( curhighlighted != null ){
+    destroy(curhighlighted['highlighted_mesh']) 
+    curhighlighted['highlighted_mesh'] = null // removes old highlited
+}
 
-currenthighlighted['highlighted_mesh'] = null // removes old highlited
-currenthighlighted = body //now this is the currently clicked
+curhighlighted = body //now this is the currently clicked
 }
 
 
@@ -217,6 +233,22 @@ async function reset(){
 }
 document.getElementById("resetButton").addEventListener("click", reset);
 
+async function wind(){
+fetch('/wind', {
+    method: 'POST',  
+    credentials: 'include',
+    headers: {
+    'Content-Type': 'application/json',  
+    "Accept": "application/json"
+    },
+body: JSON.stringify({ timestep: document.getElementById("windTimestep").value}) 
+})
 
+    body_info.forEach(info => {
+        destroy(info['sphere'])
+        
+    })
+    body_info = await setup()
 
-
+}
+document.getElementById("windButton").addEventListener("click", wind);

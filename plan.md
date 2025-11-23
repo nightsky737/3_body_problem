@@ -15,3 +15,5 @@
 # Todo:
 - overlay navbar
 - allow clicking to moves
+- Fix jank when resetting while paused
+- CLean logs so when user edits smth it doesnt do weird stuff
