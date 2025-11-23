@@ -1,6 +1,7 @@
 import math, threading
 import numpy as np
 from flask import Flask, render_template, jsonify
+import random
 
 app = Flask(__name__) #assuming this makes flask stuff
 
@@ -10,17 +11,17 @@ G = 6.67 * 10 ** -6#-11
 class body:
     def __init__(self, x=np.array([0,0,0], dtype='float64'),
                   v=np.array([0,0,0], dtype='float64'), 
-                  a=np.array([0,0,0], dtype='float64'), m =1, c =None):
+                  a=np.array([0,0,0], dtype='float64'), r=0.2, m =1, c =None):
         self.x = x
         self.v = v
         self.a = a #x, y, z vector
         self.m = m
         self.c = c
-        self.r = 1
+        self.r = r
 
         self.isinitial = True
 
-        self.initial_state = {'x' : np.copy(x), 'v': np.copy(v), 'a': np.copy(a), 'm': np.copy(m), 'c': np.copy(c)}
+        self.initial_state = {'x' : np.copy(x), 'v': np.copy(v), 'a': np.copy(a), 'm': np.copy(m), 'c': np.copy(c), 'r' : r}
     
     def update(self, dt):
         self.isinitial = False
@@ -110,7 +111,11 @@ class Simulation:
             body.reset()
 
     def add(self):
-        self.bodies.append(body(np.random.rand(3,) * 400, v=(np.random.rand(3,) - 0.5)* 200, m= 10e10 ))
+        rgb_values = random.randint(150,255),random.randint(150,255),random.randint(150,255) 
+        hex_components = [f"{value:02x}" for value in rgb_values]
+        hex_color_code = '#' + ''.join(hex_components)
+
+        self.bodies.append(body(np.random.rand(3,) * 400, v=(np.random.rand(3,) - 0.5)* 200,r=random.random()/2, m= 10e10, c=hex_color_code))
 
 
 

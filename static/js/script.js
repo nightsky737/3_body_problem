@@ -61,8 +61,8 @@
     body_info.forEach(body => {
         body['trail'] = []
         //creation and addition of body to scene
-        const geometry = new THREE.SphereGeometry( 0.2, 32, 16 );
-        const material = new THREE.MeshBasicMaterial( { color: 0xffff00 } );
+        const geometry = new THREE.SphereGeometry( body['r'], 32, 16 );
+        const material = new THREE.MeshBasicMaterial( { color: body['c'] } );
         const sphere = new THREE.Mesh( geometry, material );
         body['sphere'] = sphere
         scene.add( sphere );
@@ -136,7 +136,7 @@
                     })
 
                     body_info.forEach(info => {
-                        const mat = new THREE.LineBasicMaterial({color: '#1976d2'})
+                        const mat = new THREE.LineBasicMaterial({color: info['c']})
                         const geo = new THREE.BufferGeometry().setFromPoints(info['trail'] )
                         const line = new THREE.Line(geo, mat)
                         scene.add(line)
@@ -145,14 +145,11 @@
                 }
 
         requestAnimationFrame(animate);
-        renderer.render(scene, cam)
+        renderer.render(scene, cam) 
         controls.update()
     }
     setInterval(pollCoords, 50);
 
     animate();
 
-    /*
-    Other notes: Can also add things as children to other things so that they can like move together.
-    */
 
