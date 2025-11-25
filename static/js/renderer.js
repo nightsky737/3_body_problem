@@ -13,12 +13,10 @@ const renderer = new THREE.WebGLRenderer(); //antialias helps blend colors ig
 renderer.setSize(W, H);
 document.getElementById("renderer").appendChild(renderer.domElement) 
 
-document.querySelectorAll(".x-group")
+document.querySelectorAll("bodyinput")
     .forEach(group => group.addEventListener("input", onEdit));
-document.querySelectorAll(".v-group")
-    .forEach(group => group.addEventListener("input", onEdit));
-document.querySelectorAll(".a-group")
-    .forEach(group => group.addEventListener("input", onEdit));
+
+
 //cam + lighting
 const fov = 75 //in degrees
 const aspect = W / H //aspect ratio
@@ -281,6 +279,11 @@ async function updateValues(){
         .forEach(group => {
             group.value = curhighdata['a'][i]
         i++;});
+
+  document.getElementById("mass").value= curhighdata['m'];
+    document.getElementById("radius").value= curhighdata['r'];
+
+
 }
 
 
@@ -290,6 +293,8 @@ async function onEdit(e) {
         paused = true;
         await fetch('/pause');
     }
+
+    
 
     fetch('/update', {
         method: 'POST',  
@@ -301,7 +306,7 @@ async function onEdit(e) {
     body: JSON.stringify( {'idx' : curhighlightedidx, 'r' : 2  }) 
     })
    
-
+    reload_bodies();
   
 }
 

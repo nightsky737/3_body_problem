@@ -137,7 +137,7 @@ class Simulation:
 
     def get_full_body_info(self, idx):
         body = self.bodies[idx]
-        return  {'r': float(body.r), 'c' : body.c, 'x' : body.x.tolist(), 'v': body.v.tolist(), 'a' : body.a.tolist()}
+        return  {'r': float(body.r), 'm' : str(body.m), 'c' : body.c, 'x' : body.x.tolist(), 'v': body.v.tolist(), 'a' : body.a.tolist()}
 
 
     def pause(self):

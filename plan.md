@@ -14,12 +14,12 @@
 
 # Todo:
 - overlay navbar
-- allow clicking to moves
 - Fix jank when resetting while paused
 - CLean logs so when user edits smth it doesnt do weird stuff
 - fix keep trails on reload bodies
 - Separate stuff for separate users
 - spam adding balls somehow breaks it :skull:
+- do the adding ish thing
 
 # What happens:
 - What is saved in previous states? (Ie if someone adds something, do all previous states get erased? )
