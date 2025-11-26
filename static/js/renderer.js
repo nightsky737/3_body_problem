@@ -80,8 +80,10 @@ function destroy(item){
 
 //Initial setup/info of bodies
 async function setup(){
+    console.log("setting up")
+
     let binfo = []
-    await fetch('/get_body_info').then(response => { //await functions depending on what is returned: promise -> waits. normal val -> doesnt
+    await fetch('/get_all_body_info').then(response => { //await functions depending on what is returned: promise -> waits. normal val -> doesnt
         return response.json(); 
     }).then(data =>{
         binfo = data
@@ -95,8 +97,11 @@ async function setup(){
         const sphere = new THREE.Mesh( geometry, material );
         body['sphere'] = sphere
         body['highlighted'] = false;
-        scene.add( sphere );
+        scene.add(sphere);
+        console.log(sphere)
         interactionManager.add(sphere)
+
+
         sphere.addEventListener('mousedown', (event) =>{
             for (let i = 0; i < body_info.length; i++){
                 if(body_info[i]['sphere'] == event.target){
@@ -122,14 +127,18 @@ async function reload_bodies(keep_trails = false){
                 destroy(trail)
             })
     }
-    update_bodies(body_info, 100);
+    for (let i = 0; i < body_info.length; i++) {
+
+    body_info[i]['sphere'].position.x =  body_info[i].x[0] /100
+    body_info[i]['sphere'].position.y =body_info[i].x[1] /100
+    body_info[i]['sphere'].position.z = body_info[i].x[2]  /100
+}
 }
 
 //updates (movemetn)
 function update_bodies(coords, scaler = 1) {
     for (let i = 0; i < coords.length; i++) {
-        // console.log(paused)
-        // console.log(coords)
+
         body_info[i]['sphere'].position.x = coords[i].x /scaler
         body_info[i]['sphere'].position.y = coords[i].y/scaler
         body_info[i]['sphere'].position.z = coords[i].z /scaler
@@ -238,8 +247,6 @@ updateValues();
 
 //  {'r': float(body.r), 'c' : body.c, 'x' : body.x.tolist(), 'v': body.v.tolist(), 'a' : body.a.tolist()}
 
-
-
 }
 
 async function updateValues(){
@@ -249,7 +256,7 @@ async function updateValues(){
 
     let curhighdata = null
     // should update
-    await fetch('/get_full_body_info', {
+    await fetch('/get_one_body_info', {
         method: 'POST',  
         credentials: 'include',
         headers: {
@@ -294,7 +301,7 @@ async function onEdit(e) {
         await fetch('/pause');
     }
 
-    
+
 
     fetch('/update', {
         method: 'POST',  

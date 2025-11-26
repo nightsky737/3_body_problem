@@ -33,3 +33,5 @@ Because I Have the memory of a gerbil and sometimes forget I wrote a fxn.
 async function remove_body(idx) -> Removes a body by idx
 
 async function setup() -> Grabs body info
+add() -> adds a body
+ reload_bodies(keep_trails = false) -> theoretically destrohys all current bodies, gets new info, and then loads bodies based on new info.

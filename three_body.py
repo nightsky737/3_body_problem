@@ -132,10 +132,10 @@ class Simulation:
             {'x': body.x[0], 'y': body.x[1], 'z' : body.x[2]} for body in self.bodies
         ]
 
-    def get_body_info(self):
-        return [{'r': float(body.r), 'c' : body.c} for body in self.bodies]
+    def get_all_body_info(self):
+        return  [{'r': float(body.r), 'm' : str(body.m), 'c' : body.c, 'x' : body.x.tolist(), 'v': body.v.tolist(), 'a' : body.a.tolist()} for body in self.bodies]
 
-    def get_full_body_info(self, idx):
+    def get_one_body_info(self, idx):
         body = self.bodies[idx]
         return  {'r': float(body.r), 'm' : str(body.m), 'c' : body.c, 'x' : body.x.tolist(), 'v': body.v.tolist(), 'a' : body.a.tolist()}
 
@@ -195,14 +195,14 @@ def reset():
     sim.reset()
     return {}
 
-@app.route("/get_body_info")
+@app.route("/get_all_body_info")
 def body_info():
-    return jsonify(sim.get_body_info())
+    return jsonify(sim.get_all_body_info())
 
-@app.route("/get_full_body_info", methods=["POST"])
+@app.route("/get_one_body_info", methods=["POST"])
 def get_info():
     if request.method == 'POST':
-        return jsonify(sim.get_full_body_info(request.get_json()['index']))
+        return jsonify(sim.get_one_body_info(request.get_json()['index']))
 
 @app.route("/wind", methods=["POST"]) 
 def wind():
