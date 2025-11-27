@@ -4,6 +4,7 @@ import { InteractionManager } from "./libs/three.interactive.js";
 
 //globalsish
 let prevtrails = []
+let show_trails = true;
 let paused = false;
 let notupdated = true;
 let shouldFollow = true;
@@ -513,6 +514,11 @@ async function deleteball(){
 }
 document.getElementById("deleteBall").addEventListener("click", deleteball);
 
+async function toggletrail(){
+    show_trails = !show_trails
+}
+document.getElementById("trailToggle").addEventListener("click", toggletrail);
+
 
 async function wind(){
 fetch('/wind', {
@@ -540,12 +546,13 @@ function animate(t=0){
 
             if (latestCoords != null) {
                 // Update trails
-       
-                for(let i = 0; i < body_info.length; i++){
+                
+             for(let i = 0; i < body_info.length; i++){
                     body_info[i]['trail'].push({x:  latestCoords[i].x, y: latestCoords[i].y, z : latestCoords[i].z })
                     if (body_info[i]['trail'].length > MAX_TRAIL) body_info[i]['trail'].shift(); 
 
                 }
+           
                 
                 update_bodies(latestCoords)
 
@@ -555,6 +562,7 @@ function animate(t=0){
                     destroy(trail)
                 })
                 prevtrails = []
+                if(show_trails){
 
                 body_info.forEach(info => {
                     const mat = new THREE.LineBasicMaterial({color: info['c']})
@@ -562,7 +570,8 @@ function animate(t=0){
                     const line = new THREE.Line(geo, mat)
                     scene.add(line)
                     prevtrails.push(line)
-                });
+                });     }
+   
             }
        }catch (e){
     }
