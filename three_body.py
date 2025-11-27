@@ -256,3 +256,5 @@ def update_shit():
 def add():
     sim.add()
     return {}
+
+app.run(host="0.0.0.0", port=5000, debug=True)
