@@ -214,7 +214,7 @@ let curhighlighted = null;
 let curhighlightedidx = -1;
 function highlight(idx){
     let body = body_info[idx]
-
+    
     if (curhighlighted == body){
         //dehighlight
         destroy(curhighlighted['highlighted_mesh']) 
@@ -227,6 +227,8 @@ function highlight(idx){
     }
 
     openNav()
+    document.getElementById("bodyinfoheader").textContent = `Body ${idx}`
+
     const geo = new THREE.SphereGeometry(body['r'] * 1.2, 32, 16)
     const material = new THREE.MeshBasicMaterial({
         color: body['c'], 
@@ -398,17 +400,25 @@ async function removeLast(){
 document.getElementById("removeButton").addEventListener("click", removeLast);
 
 async function getNext(){
-    curhighlightedidx += 1
-    curhighlightedidx %= body_info.length
+    highlight((curhighlightedidx + 1) % body_info.length)
 }
 document.getElementById("nextBall").addEventListener("click", getNext);
 
 
 async function getPrev(){
-    curhighlightedidx -= 1
-    curhighlightedidx  = (curhighlightedidx +  body_info.length) % body_info.length
+    highlight(curhighlightedidx -1 +  body_info.length) % body_info.length
+    
 }
 document.getElementById("prevBall").addEventListener("click", getPrev);
+
+
+async function highlighsmth(){
+    if (body_info.length > 0){
+    highlight(0)
+
+    }
+}
+document.getElementById("openButton").addEventListener("click", highlighsmth);
 
 
 
