@@ -64,20 +64,23 @@ class body:
         self.x += vector
         if self.isinitial:
             self.initial_state.x += vector
+
+
     def update_values(self, data):
         if data['x']:
-            self.x = np.array(data['x'])
-            print(self.x)
+            self.x = np.array([float(i) for i in data['x']])
         if data['v']:
-            self.v = np.array(data['v'])
+            self.v = np.array([float(i) for i in data['v']])
+            print(self.v)
+            print(self.v[0])
         if data['a']:
-            self.a = np.array(data['x'])
+            self.a = np.array([float(i) for i in data['a']])
 
 
         if data['m']:
-            self.m =  data['m']
+            self.m =  float(data['m'])
         if data['r']:
-            self.r = data['r']
+            self.r = float(data['r'])
         if data['c']:
             2
             #self.c = data['c']

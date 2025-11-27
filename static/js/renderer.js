@@ -312,8 +312,8 @@ async function onEdit(e) {
         'm' : document.getElementById("radius").value ,
 
         'x' : [document.getElementById("pos-x").value , document.getElementById("pos-y").value , document.getElementById("pos-z").value ] ,
-        'a' : [document.getElementById("vel-x").value , document.getElementById("vel-y").value , document.getElementById("vel-z").value ] ,
-        'v' : [document.getElementById("acc-x").value , document.getElementById("acc-y").value , document.getElementById("acc-z").value ] ,
+        'v' : [document.getElementById("vel-x").value , document.getElementById("vel-y").value , document.getElementById("vel-z").value ] ,
+        'a' : [document.getElementById("acc-x").value , document.getElementById("acc-y").value , document.getElementById("acc-z").value ] ,
         'c' : 5
     })
     })
