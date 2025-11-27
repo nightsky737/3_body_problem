@@ -101,7 +101,6 @@ async function setup(){
         body['sphere'] = sphere
         body['highlighted'] = false;
         scene.add(sphere);
-        console.log(sphere)
         interactionManager.add(sphere)
 
 
@@ -465,7 +464,6 @@ async function clippAcceleration(){
     await fetch('/clipAcc').then(response => { //await functions depending on what is returned: promise -> waits. normal val -> doesnt
         return response.json(); 
     }).then(data =>{
-        console.log(data)
         if(data['clipped']){
             document.getElementById("accClip").textContent = "Acceleration Clipping: On"
         }else{
@@ -595,7 +593,6 @@ function animate(t=0){
 
         }
     }
-    console.log(notupdated)
 
     lastupdate++;
     requestAnimationFrame(animate);
